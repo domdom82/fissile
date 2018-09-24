@@ -10,7 +10,6 @@ import (
 
 var (
 	flagBuildHelmOutputDir       string
-	flagBuildHelmDefaultEnvFiles []string
 	flagBuildHelmUseMemoryLimits bool
 	flagBuildHelmUseCPULimits    bool
 	flagBuildHelmTagExtra        string
@@ -25,7 +24,6 @@ var buildHelmCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		flagBuildHelmOutputDir = buildHelmViper.GetString("output-dir")
-		flagBuildHelmDefaultEnvFiles = splitNonEmpty(buildHelmViper.GetString("defaults-file"), ",")
 		flagBuildHelmUseMemoryLimits = buildHelmViper.GetBool("use-memory-limits")
 		flagBuildHelmUseCPULimits = buildHelmViper.GetBool("use-cpu-limits")
 		flagBuildHelmTagExtra = buildHelmViper.GetString("tag-extra")
@@ -77,7 +75,7 @@ var buildHelmCmd = &cobra.Command{
 			}()
 		}
 
-		return fissile.GenerateKube(flagBuildHelmDefaultEnvFiles, settings)
+		return fissile.GenerateKube(settings)
 	},
 }
 var buildHelmViper = viper.New()
@@ -92,13 +90,6 @@ func init() {
 		"",
 		".",
 		"Helm chart files will be written to this directory",
-	)
-
-	buildHelmCmd.PersistentFlags().StringP(
-		"defaults-file",
-		"D",
-		"",
-		"Env files that contain defaults for the configuration variables",
 	)
 
 	buildHelmCmd.PersistentFlags().BoolP(

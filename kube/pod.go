@@ -472,7 +472,7 @@ func getEnvVarsFromConfigs(configs model.Variables, settings ExportSettings) (he
 			stringifiedValue = fmt.Sprintf(tmpl, name, name, name, name, required)
 		} else {
 			var ok bool
-			ok, stringifiedValue = config.Value(settings.Defaults)
+			ok, stringifiedValue = config.Value()
 			if !ok {
 				// Ignore config vars that don't have a default value
 				continue

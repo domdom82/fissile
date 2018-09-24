@@ -255,11 +255,6 @@
 			"Rev": "a61940202e76c0397a5783b77113673a2b23656a"
 		},
 		{
-			"ImportPath": "github.com/joho/godotenv",
-			"Comment": "v1.1",
-			"Rev": "726cc8b906e3d31c70a9671c90a13716a8d3f50d"
-		},
-		{
 			"ImportPath": "github.com/machinebox/progress",
 			"Comment": "v0.2.0",
 			"Rev": "d29346a09ee172269963ae3309e6835d6581a7d0"
