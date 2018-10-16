@@ -214,10 +214,14 @@ func newService(role *model.InstanceGroup, job *model.JobReference, serviceType 
 	}
 	spec.Add("ports", helm.NewNode(ports))
 
-	jobName := util.ConvertNameToKey(job.Name)
+	jobName := job.ContainerProperties.BoshContainerization.ServiceName
+	if len(jobName) == 0 {
+		jobName = job.Name
+	}
+
 	serviceName := util.ConvertNameToKey(role.Name)
 	if serviceName != jobName {
-		serviceName += "-" + jobName
+		serviceName += "-" + util.ConvertNameToKey(jobName)
 	}
 
 	switch serviceType {

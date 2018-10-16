@@ -171,7 +171,7 @@ func TestHeadlessServiceKube(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 
-	manifest, role := serviceTestLoadRole(assert, "exposed-ports.yml")
+	manifest, role := serviceTestLoadRole(assert, "exposed-ports-service.yml")
 	if manifest == nil || role == nil {
 		return
 	}
@@ -187,7 +187,7 @@ func TestHeadlessServiceKube(t *testing.T) {
 	require.NoError(t, err)
 	testhelpers.IsYAMLSubsetString(assert, `---
 		metadata:
-			name: myrole-tor-set
+			name: myrole-service-set
 		spec:
 			ports:
 			-
@@ -210,7 +210,7 @@ func TestHeadlessServiceHelm(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 
-	manifest, role := serviceTestLoadRole(assert, "exposed-ports.yml")
+	manifest, role := serviceTestLoadRole(assert, "exposed-ports-service.yml")
 	if manifest == nil || role == nil {
 		return
 	}
@@ -235,15 +235,15 @@ func TestHeadlessServiceHelm(t *testing.T) {
 			apiVersion: "v1"
 			kind: "Service"
 			metadata:
-				name: "myrole-tor-set"
+				name: "myrole-service-set"
 				labels:
-					app.kubernetes.io/component: myrole-tor-set
+					app.kubernetes.io/component: myrole-service-set
 					app.kubernetes.io/instance: MyRelease
 					app.kubernetes.io/managed-by: Tiller
 					app.kubernetes.io/name: MyChart
 					app.kubernetes.io/version: 1.22.333.4444
 					helm.sh/chart: MyChart-42.1_foo
-					skiff-role-name: "myrole-tor-set"
+					skiff-role-name: "myrole-service-set"
 			spec:
 				clusterIP: "None"
 				ports:
@@ -272,15 +272,15 @@ func TestHeadlessServiceHelm(t *testing.T) {
 			apiVersion: "v1"
 			kind: "Service"
 			metadata:
-				name: "myrole-tor-set"
+				name: "myrole-service-set"
 				labels:
-					app.kubernetes.io/component: myrole-tor-set
+					app.kubernetes.io/component: myrole-service-set
 					app.kubernetes.io/instance: MyRelease
 					app.kubernetes.io/managed-by: Tiller
 					app.kubernetes.io/name: MyChart
 					app.kubernetes.io/version: 1.22.333.4444
 					helm.sh/chart: MyChart-42.1_foo
-					skiff-role-name: "myrole-tor-set"
+					skiff-role-name: "myrole-service-set"
 			spec:
 				clusterIP: "None"
 				ports:
