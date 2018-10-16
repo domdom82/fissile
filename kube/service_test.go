@@ -14,7 +14,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func serviceTestLoadRole(assert *assert.Assertions, manifestName string) (*model.RoleManifest, *model.InstanceGroup) {
+func serviceTestLoadRole(assert *assert.Assertions, manifestName string, roleNames ...string) (*model.RoleManifest, *model.InstanceGroup) {
+	roleName := "myrole"
+	if len(roleNames) > 0 {
+		roleName = roleNames[0]
+	}
+
 	workDir, err := os.Getwd()
 	assert.NoError(err)
 
@@ -29,7 +34,7 @@ func serviceTestLoadRole(assert *assert.Assertions, manifestName string) (*model
 	if !assert.NoError(err) {
 		return nil, nil
 	}
-	role := manifest.LookupInstanceGroup("myrole")
+	role := manifest.LookupInstanceGroup(roleName)
 	if !assert.NotNil(role, "Failed to find role in manifest") {
 		return nil, nil
 	}
@@ -40,7 +45,7 @@ func TestServiceKube(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 
-	manifest, role := serviceTestLoadRole(assert, "exposed-ports.yml")
+	manifest, role := serviceTestLoadRole(assert, "exposed-ports-tor.yml", "tor")
 	if manifest == nil || role == nil {
 		return
 	}
@@ -57,7 +62,7 @@ func TestServiceKube(t *testing.T) {
 	require.NoError(t, err)
 	testhelpers.IsYAMLSubsetString(assert, `---
 		metadata:
-			name: myrole-tor
+			name: tor
 		spec:
 			ports:
 			-
@@ -69,7 +74,7 @@ func TestServiceKube(t *testing.T) {
 				port: 443
 				targetPort: 443
 			selector:
-				app.kubernetes.io/component: myrole
+				app.kubernetes.io/component: tor
 	`, actual)
 }
 
@@ -77,7 +82,7 @@ func TestServiceHelm(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)
 
-	manifest, role := serviceTestLoadRole(assert, "exposed-ports.yml")
+	manifest, role := serviceTestLoadRole(assert, "exposed-ports-tor.yml", "tor")
 	if manifest == nil || role == nil {
 		return
 	}
@@ -101,15 +106,15 @@ func TestServiceHelm(t *testing.T) {
 			apiVersion: "v1"
 			kind: "Service"
 			metadata:
-				name: "myrole-tor"
+				name: "tor"
 				labels:
-					app.kubernetes.io/component: myrole-tor
+					app.kubernetes.io/component: tor
 					app.kubernetes.io/instance: MyRelease
 					app.kubernetes.io/managed-by: Tiller
 					app.kubernetes.io/name: MyChart
 					app.kubernetes.io/version: 1.22.333.4444
 					helm.sh/chart: MyChart-42.1_foo
-					skiff-role-name: "myrole-tor"
+					skiff-role-name: "tor"
 			spec:
 				ports:
 				-	name: "http"
@@ -121,7 +126,7 @@ func TestServiceHelm(t *testing.T) {
 					protocol: "TCP"
 					targetPort: 443
 				selector:
-					app.kubernetes.io/component: "myrole"
+					app.kubernetes.io/component: "tor"
 		`, actual)
 	})
 
@@ -137,15 +142,15 @@ func TestServiceHelm(t *testing.T) {
 			apiVersion: "v1"
 			kind: "Service"
 			metadata:
-				name: "myrole-tor"
+				name: "tor"
 				labels:
-					app.kubernetes.io/component: myrole-tor
+					app.kubernetes.io/component: tor
 					app.kubernetes.io/instance: MyRelease
 					app.kubernetes.io/managed-by: Tiller
 					app.kubernetes.io/name: MyChart
 					app.kubernetes.io/version: 1.22.333.4444
 					helm.sh/chart: MyChart-42.1_foo
-					skiff-role-name: "myrole-tor"
+					skiff-role-name: "tor"
 			spec:
 				ports:
 				-	name: "http"
@@ -157,7 +162,7 @@ func TestServiceHelm(t *testing.T) {
 					protocol: "TCP"
 					targetPort: 443
 				selector:
-					app.kubernetes.io/component: "myrole"
+					app.kubernetes.io/component: "tor"
 		`, actual)
 	})
 }
